@@ -12,7 +12,6 @@ fetch("https://api.open5e.com/v1/classes/")
 
 function classes(data) {
     console.log(data);
-    console.log(data.results[11].desc);
     //go through every class
     for(let i = 0; i < data.results.length; i++){
     //add html structure for each class in the array
@@ -30,10 +29,26 @@ function format_string(text) {
     let result = "";
     //format every new line
     for(let i = 0; i < array.length; i++) {
-        if(array[i] != " ") { //ignore whitespaces
-            if(array[i].includes("#")){ //format into a header
+
+        if(array[i] !== " ") { //ignore whitespaces
+            array[i] = array[i].trim();
+
+            //BOLD ITALIC TEXT
+            array[i] = array[i].replaceAll("**_", "<strong style=\"font-style: italic;\">");
+            array[i] = array[i].replaceAll("_**", "</strong>");
+
+            //placeholder for **
+            array[i] = array[i].replaceAll("**", "BOLD");
+            
+            //Lists made from *
+            if(array[i].includes("*") && array[i].indexOf(" ") == 1) {
+                result += `<li>${array[i].replace("*", "")}</li>`;
+            }
+            else if(array[i].includes("#")){ //format into a header
                 let size = array[i].lastIndexOf("#") + 1;
                 result += `<h${size}>${array[i].replaceAll("#", "")}</h${size}>`;
+            }
+            else if( array[i].trim() == ">"){
             }
             else { //format into text
                 result += `<p>${array[i]}</p>`;

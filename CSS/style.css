@@ -58,3 +58,7 @@ body {
   background: #838383; 
   cursor: pointer;
 }
+
+.arrowList{
+  color: green;
+}
