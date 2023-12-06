@@ -12,16 +12,36 @@ fetch("https://api.open5e.com/v1/classes/")
 
 function classes(data) {
     console.log(data);
+
+    //go through every class
     for(let i = 0; i < data.results.length; i++){
+    //add html structure for each class in the array
     document.getElementById("classes").innerHTML += `
     <details>
         <summary>${data.results[i].name}</summary>
-        <textarea id="description" rows="30" cols="170">${data.results[i].desc}</textarea>
-    </details>`
+        <div>${format_string(data.results[i].desc)}</div>
+    </details>`;
     }
 }
 
-
+function format_string(text) {
+    //split a string at each new line
+    let array = text.split("\n");
+    let result = "";
+    //format every new line
+    for(let i = 0; i < array.length; i++) {
+        if(array[i] != " ") { //ignore whitespaces
+            if(array[i].includes("#")){ //format into a header
+                let size = array[i].lastIndexOf("#") + 1;
+                result += `<h${size}>${array[i].replaceAll("#", "")}</h${size}>`;
+            }
+            else { //format into text
+                result += `<p>${array[i]}</p>`;
+            }
+        }
+    }
+    return result;
+}
 
 /*function roll_dice(multiplier, die) {
     let result = 0;
