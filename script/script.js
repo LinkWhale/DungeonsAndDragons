@@ -12,7 +12,7 @@ fetch("https://api.open5e.com/v1/classes/")
 
 function classes(data) {
     console.log(data);
-
+    console.log(data.results[11].desc);
     //go through every class
     for(let i = 0; i < data.results.length; i++){
     //add html structure for each class in the array
