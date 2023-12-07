@@ -16,9 +16,12 @@ function classes(data) {
     for(let i = 0; i < data.results.length; i++){
     //add html structure for each class in the array
     document.getElementById("classes").innerHTML += `
-    <details>
+    <details class="layer1">
         <summary>${data.results[i].name}</summary>
-        <div>${format_string(data.results[i].desc)}</div>
+        <details class="layer2">
+            <summary>Description</summary>
+                <div class="description">${format_string(data.results[i].desc)}</div>
+            </details>
     </details>`;
     }
 }
@@ -27,6 +30,9 @@ function format_string(text) {
     //split a string at each new line
     let array = text.split("\n");
     let result = "";
+
+    let bold_open = false
+    let div_counter = 0;
     //format every new line
     for(let i = 0; i < array.length; i++) {
 
@@ -37,20 +43,40 @@ function format_string(text) {
             array[i] = array[i].replaceAll("**_", "<strong style=\"font-style: italic;\">");
             array[i] = array[i].replaceAll("_**", "</strong>");
 
-            //placeholder for **
-            array[i] = array[i].replaceAll("**", "BOLD");
+            //changes ** into bold text
+            while(array[i].includes("**")) {
+            array[i] = array[i].replace("**", `<strong>`);
+            array[i] = array[i].replace("**", `</strong>`);}
             
             //Lists made from *
             if(array[i].includes("*") && array[i].indexOf(" ") == 1) {
                 result += `<li>${array[i].replace("*", "")}</li>`;
             }
-            else if(array[i].includes("#")){ //format into a header
+
+            //format into a header
+            else if(array[i].includes("#")){ 
                 let size = array[i].lastIndexOf("#") + 1;
                 result += `<h${size}>${array[i].replaceAll("#", "")}</h${size}>`;
             }
-            else if( array[i].trim() == ">"){
+
+            //Make div out of sentences starting with >
+            else if(array[i].indexOf(">") == 0){
+                if(array[i + 1].indexOf(">") == 0 && div_counter == 0) {
+                    result += `<div class="arrowList">${array[i].replace(">", "")}`;
+                    div_counter ++;
+                }
+                else if(array[i + 1].indexOf(">") == 0 && div_counter > 0) {
+                    result += `<p>${array[i].replace(">", "")}</p>`;
+                    div_counter ++;
+                }
+                else if(array[i + 1].indexOf(">") != 0 && div_counter > 0) {
+                    result += `<p>${array[i].replace(">", "")}</p></div>`;
+                    div_counter = 0;
+                }
             }
-            else { //format into text
+
+            //format into text
+            else { 
                 result += `<p>${array[i]}</p>`;
             }
         }

@@ -62,3 +62,7 @@ body {
 .arrowList{
   color: green;
 }
+
+.layer2 > summary {
+    margin-left: 2em;
+}
