@@ -16,13 +16,18 @@ function classes(data) {
     for(let i = 0; i < data.results.length; i++){
     //add html structure for each class in the array
     document.getElementById("classes").innerHTML += `
-    <details class="layer1">
-        <summary>${data.results[i].name}</summary>
-        <details class="layer2">
+    <details id="${data.results[i].name}1" class="layer1">
+    <summary>${data.results[i].name}</summary>
+        <details class="description">
             <summary>Description</summary>
-                <div class="description">${format_string(data.results[i].desc)}</div>
-            </details>
-    </details>`;
+            ${format_string(data.results[i].desc)}
+        </details>
+        <details class="description">
+            <summary>Table</summary>
+            <h1>${data.results[i].name} Level Table</h1>
+            ${makeTable(data.results[i].table)}
+        </details>
+    </details>`
     }
 }
 
@@ -31,7 +36,6 @@ function format_string(text) {
     let array = text.split("\n");
     let result = "";
 
-    let bold_open = false
     let div_counter = 0;
     //format every new line
     for(let i = 0; i < array.length; i++) {
@@ -45,42 +49,103 @@ function format_string(text) {
 
             //changes ** into bold text
             while(array[i].includes("**")) {
-            array[i] = array[i].replace("**", `<strong>`);
-            array[i] = array[i].replace("**", `</strong>`);}
+            array[i] = array[i].replace("**", `<strong>`); //first **
+            array[i] = array[i].replace("**", `</strong>`);} //second **
             
             //Lists made from *
-            if(array[i].includes("*") && array[i].indexOf(" ") == 1) {
-                result += `<li>${array[i].replace("*", "")}</li>`;
+            while(array[i].includes("*") && array[i].indexOf(" ") == 1) {
+                array[i] = `<li>${array[i].replace("*", "")}</li>`;
             }
 
             //format into a header
-            else if(array[i].includes("#")){ 
+            while(array[i].includes("#")){ 
                 let size = array[i].lastIndexOf("#") + 1;
-                result += `<h${size}>${array[i].replaceAll("#", "")}</h${size}>`;
+                array[i] = `<h${size}>${array[i].replaceAll("#", "")}</h${size}>`;
             }
 
             //Make div out of sentences starting with >
-            else if(array[i].indexOf(">") == 0){
+            if(array[i].indexOf(">") == 0)
+            {
+                //check for beggining of div
                 if(array[i + 1].indexOf(">") == 0 && div_counter == 0) {
                     result += `<div class="arrowList">${array[i].replace(">", "")}`;
                     div_counter ++;
                 }
+                //check for div elements
                 else if(array[i + 1].indexOf(">") == 0 && div_counter > 0) {
                     result += `<p>${array[i].replace(">", "")}</p>`;
                     div_counter ++;
                 }
+                //check for end of div
                 else if(array[i + 1].indexOf(">") != 0 && div_counter > 0) {
                     result += `<p>${array[i].replace(">", "")}</p></div>`;
                     div_counter = 0;
                 }
             }
+            //table maker
+            else if(array[i].includes("\(table\)")) 
+            {
+                //markdown gods blessed me with including (table) before table elements
+                result += array[i]; //most of them are already bold so they arent added
+                result += `<table class="table">`;
+                let c = 1;
+                while(true) 
+                {
+                    if(array[i + c].includes("|")) 
+                    { 
+                        let sentence = array[i + c].split("|");//seperate table items
+                        sentence.pop();
+                        sentence.shift();
+                        result += "<tr>"; //start table row
+                        for(let element = 0; element < sentence.length; element++)
+                        { 
+                            result += `<td class="table-dark">${sentence[element]}</td>`;// make td out of everything on one line
+                        }
+                        result += "</tr>"; //end table row
+                        c ++;
+                    }
+                    else if(array[i + c] == " ")
+                    { //skip spaces
+                        c ++;
+                    }
+                    else
+                    {
+                        result += "</table>"; //close table
+                        break;
+                    }
+                }
+                i += c - 2; // skip indexes of the table
+            }
 
             //format into text
-            else { 
+            else 
+            { 
                 result += `<p>${array[i]}</p>`;
             }
         }
+        else 
+        {
+            result += "<br>"
+        }
     }
+    return result;
+}
+
+function makeTable(content) {
+    let array = content.split("\n");
+    let result = `<table class="table table-bordered">`;
+        for(let i = 0; i < array.length; i++) 
+        {
+            let sentence = array[i].split("|");//seperate table items
+            sentence.pop();
+            sentence.shift();
+            result += "<tr>"; //start table row
+            for(let element = 0; element < sentence.length; element++)
+                { 
+                    result += `<td class="table-dark">${sentence[element].trim()}</td>`;// make td out of everything on one line
+                }
+                result += "</tr>"; //end table row
+                }
     return result;
 }
 
