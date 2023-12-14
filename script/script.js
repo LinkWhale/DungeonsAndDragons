@@ -20,22 +20,30 @@ function classes(data) {
     <summary>${data.results[i].name}</summary>
         <details class="description">
             <summary>Proficiencies</summary>
+            <div class="content">
             <strong>Armor: </strong> ${format_string(data.results[i].prof_armor)}
             <strong>Saving throws: </strong> ${format_string(data.results[i].prof_saving_throws)}
             <strong>Skills: </strong> ${format_string(data.results[i].prof_skills)}
             <strong>Tools: </strong> ${format_string(data.results[i].prof_tools)}
             <strong>Weapons: </strong> ${format_string(data.results[i].prof_weapons)}
+            </div>
         </details>
         <details class="description">
             <summary>Equipment</summary>
+            <div class="content">
             ${format_string(data.results[i].equipment)}
+            </div>
         </details>
         <details class="description">
             <summary>Description</summary>
+            <div class="content">
             ${format_string(data.results[i].desc)}
+            </div>
         </details>
-        <details class="description" id="archetypes${i}">
+        <details class="description">
             <summary>${data.results[i].subtypes_name}</summary>
+            <div class="content" id="archetypes${i}">
+            </div>
         </details>
         <details class="description">
             <summary>Table</summary>
@@ -45,9 +53,12 @@ function classes(data) {
         for(let c = 0; c < data.results[i].archetypes.length; c++){
             console.log(data.results[i].archetypes[c].name);
             document.getElementById(`archetypes${i}`).innerHTML += `
-            <details>
+            <details class="archetypes">
                 <summary>${data.results[i].archetypes[c].name}</summary>
-                ${format_string(data.results[i].archetypes[c].desc)}
+                <br>
+                <div class="content">
+                ${format_string(data.results[i].archetypes[c].desc)}<br>
+                </div>
             </details>
             `
         }
@@ -124,7 +135,7 @@ function format_string(text) {
                 console.log(array[i].indexOf(i));
                 //markdown gods blessed me with including (table) before table elements
                 result += array[i]; //most of them are already bold so they arent added
-                result += `<table class="table">`;
+                result += `<br><br><table class="table">`;
                 let c = 1;
                 while(true) 
                 {
@@ -147,7 +158,7 @@ function format_string(text) {
                     }
                     else
                     {
-                        result += "</table>"; //close table
+                        result += "</table><br><br>"; //close table
                         break;
                     }
                 }
