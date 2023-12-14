@@ -3,17 +3,13 @@ body {
     color: rgb(255, 255, 255);
 }
 
-#classes {
-  width: 10em;
-  height: 100vh;
-  background-color: rgb(63, 63, 63);
-}
 
 .layer1 {
   display: block;
   background-color: rgb(43, 43, 43);
+  font-size: 1em;
   padding: 0.5em;
-  width: 10em;
+  width: 99vw;
 }
 
 .description {
@@ -22,7 +18,7 @@ body {
   resize: none;
   cursor: pointer;
   border: none;
-  width: 95vw;
+  width: 90vw;
   padding: 1em;
   border-radius: 15px;
   margin: 1em;
